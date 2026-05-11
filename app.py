@@ -54,5 +54,5 @@ with col2:
     st.info("Optimizado para evaluación de calidad microbiológica del aire.")
 
 # 6. Pie de página
-st.caption("Proyecto de Ingeniería Biomédica - Simulación de partículas suspendidas.")
+st.caption("Proyecto de Ingeniería Civil en Biomedicina - 1er año UDD")
 
