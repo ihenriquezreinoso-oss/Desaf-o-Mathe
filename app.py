@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Analizador de Biosensores", page_icon="🧬", layout="wide")
 
 # 2. Título principal y descripción
-st.title("🔬 Monitoreo de Señal: Nanocantilever")
+st.title("🧬 Monitoreo de Señal: Nanocantilever")
 st.markdown("""
 Esta aplicación modela la oscilación de un biosensor al detectar microorganismos en un fluido. 
 La **amplitud (B)** representa el desplazamiento máximo del sensor en micrómetros.
