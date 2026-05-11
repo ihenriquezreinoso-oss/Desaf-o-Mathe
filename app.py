@@ -2,38 +2,57 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Configuración de la página
-st.set_page_config(page_title="Analizador de Biosensores", page_icon="🔬")
+# 1. Configuración de la página (Título en la pestaña del navegador e ícono)
+st.set_page_config(page_title="Analizador de Biosensores", page_icon="🧬", layout="wide")
 
-st.title("🧬 Simulación de Señal de Nanocantilever")
+# 2. Título principal y descripción
+st.title("🔬 Monitoreo de Señal: Nanocantilever")
 st.markdown("""
-Esta herramienta permite modelar la respuesta de un biosensor basado en frecuencias resonantes. 
-Ajusta los parámetros en la barra lateral para observar el comportamiento de la partícula.
+Esta aplicación modela la oscilación de un biosensor al detectar partículas suspendidas en el aire. 
+La **amplitud (B)** representa el desplazamiento máximo del sensor en micrómetros.
 """)
 
-# Barra lateral profesional
-st.sidebar.header("Configuración del Modelo")
-B = st.sidebar.slider("Amplitud de Oscilación (𝜇m)", 0.0, 2.0, 1.0)
-omega = st.sidebar.slider("Frecuencia Angular (rad/s)", 0.0, 20.0, 6.28)
-psi = st.sidebar.slider("Desfase Inicial (rad)", 0.0, float(np.pi), 0.0)
+# 3. Controles en la barra lateral (Sidebar)
+st.sidebar.header("Configuración de la Señal")
+b_val = st.sidebar.slider("Amplitud (B) [μm]", 0.0, 2.0, 1.008, help="Desplazamiento máximo en micrómetros")
+w_val = st.sidebar.slider("Frecuencia Angular (ω) [rad/s]", 0.0, 20.0, 6.33)
+p_val = st.sidebar.slider("Fase Inicial (ψ) [rad]", 0.0, float(np.pi), 0.0)
 
-st.sidebar.info("El modelo utiliza la ecuación general de movimiento armónico simple.")
+st.sidebar.markdown("---")
+st.sidebar.write("**Modelo Matemático:**")
+st.sidebar.latex(r"y(t) = B \cdot \sin(\omega t + \psi)")
 
-# Cálculo
+# 4. Generación de los datos (Cálculos físicos)
 t = np.linspace(0, 10, 1000)
-y = B * np.sin(omega * t + psi)
+y = b_val * np.sin(w_val * t + p_val)
 
-# Gráfico estético
-plt.style.use('ggplot')
-fig, ax = plt.subplots(figsize=(10, 5))
-ax.plot(t, y, color='#4CAF50', label="Señal del Sensor")
-ax.set_ylim(-2.5, 2.5)
-ax.set_xlabel("Tiempo (s)")
-ax.set_ylabel("Desplazamiento (𝜇m)")
-ax.legend()
+# 5. Creación del diseño con columnas
+col1, col2 = st.columns([3, 1])
 
-st.pyplot(fig)
+with col1:
+    # Estilo de gráfico profesional
+    plt.style.use('ggplot')
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(t, y, color='#d62728', linewidth=2.5, label="Oscilación del sensor")
+    ax.fill_between(t, y, alpha=0.1, color='#d62728')
+    
+    # Configuración de los ejes
+    ax.set_title("Respuesta Dinámica (Escala Micrométrica)", fontsize=14)
+    ax.set_xlabel("Tiempo (s)", fontsize=12)
+    ax.set_ylabel("Amplitud (μm)", fontsize=12)
+    ax.set_ylim(-2.5, 2.5)
+    ax.grid(True, linestyle='--', alpha=0.6)
+    ax.legend(loc='upper right')
+    
+    # IMPORTANTE: Se pasa la figura 'fig' a st.pyplot
+    st.pyplot(fig, use_container_width=True)
 
-# Métrica adicional
-st.columns(3)[0].metric("Amplitud Máxima", f"{B} nm")
-st.columns(3)[1].metric("Frecuencia", f"{omega/6.28:.2f} Hz")
+with col2:
+    st.subheader("Datos del Sensor")
+    st.metric(label="Amplitud", value=f"{b_val} μm")
+    st.metric(label="Frecuencia", value=f"{w_val/(2*np.pi):.2f} Hz")
+    st.info("Optimizado para evaluación de calidad microbiológica del aire.")
+
+# 6. Pie de página
+st.caption("Proyecto de Ingeniería Biomédica - Simulación de partículas suspendidas.")
+
