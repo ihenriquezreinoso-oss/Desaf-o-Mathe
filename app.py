@@ -13,7 +13,7 @@ Ajusta los parámetros en la barra lateral para observar el comportamiento de la
 
 # Barra lateral profesional
 st.sidebar.header("Configuración del Modelo")
-B = st.sidebar.slider("Amplitud de Oscilación (nm)", 0.0, 2.0, 1.0)
+B = st.sidebar.slider("Amplitud de Oscilación (𝜇m)", 0.0, 2.0, 1.0)
 omega = st.sidebar.slider("Frecuencia Angular (rad/s)", 0.0, 20.0, 6.28)
 psi = st.sidebar.slider("Desfase Inicial (rad)", 0.0, float(np.pi), 0.0)
 
@@ -29,7 +29,7 @@ fig, ax = plt.subplots(figsize=(10, 5))
 ax.plot(t, y, color='#4CAF50', label="Señal del Sensor")
 ax.set_ylim(-2.5, 2.5)
 ax.set_xlabel("Tiempo (s)")
-ax.set_ylabel("Desplazamiento (nm)")
+ax.set_ylabel("Desplazamiento (𝜇m)")
 ax.legend()
 
 st.pyplot(fig)
