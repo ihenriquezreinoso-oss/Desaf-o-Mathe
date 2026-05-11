@@ -51,7 +51,7 @@ with col2:
     st.subheader("Datos del Sensor")
     st.metric(label="Amplitud", value=f"{b_val} μm")
     st.metric(label="Frecuencia", value=f"{w_val/(2*np.pi):.2f} Hz")
-    st.info("Optimizado para evaluación de calidad microbiológica del aire.")
+    st.info("Optimizado para evaluación de calidad microbiológica.")
 
 # 6. Pie de página
 st.caption("Proyecto de Ingeniería Civil en Biomedicina - 1er año UDD")
