@@ -98,7 +98,7 @@ m3.metric(
 # 7. CADENA DE MEDICIÓN (A prueba de todo público)
 st.divider()
 st.subheader("🔗 Cadena de Medición: Del Aire al Dato")
-st.info("""
+st.info(""
 1. **Impacto:** Una partícula en el aire "choca" con nuestro sensor (Nanocantilever).
 2. **Movimiento:** El sensor vibra como un trampolín minúsculo (esto genera la onda graficada).
 3. **Conversión:** Un material especial (piezoeléctrico) transforma ese movimiento en electricidad (Diferencia de potencial "Voltaje").
