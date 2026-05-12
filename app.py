@@ -8,9 +8,9 @@ st.title("Modelo Aplicado: Detección por Resonancia en Nanocantilevers")
 
 # 2. DESCRIPCIÓN BREVE
 st.markdown("""
-Esta plataforma simula la respuesta de un biosensor mecánico diseñado para el monitoreo de la calidad del aire. 
+Esta plataforma simula la respuesta de un biosensor mecánico. 
 A continuación, podrá interactuar con el modelo de la señal eléctrica generada cuando el sensor detecta 
-partículas en suspensión (polvo, patógenos o aerosoles).
+partículas en suspensión.
 """)
 
 # 3. CÁLCULOS TÉCNICOS
@@ -26,7 +26,7 @@ p_val = st.sidebar.slider("Fase Inicial (ψ)", 0.0, float(np.pi), 0.0)
 y = b_val * np.sin(w_val * t + p_val)
 
 # 4. GRÁFICO CON SEÑALIZACIÓN CLARA
-st.subheader("📊 Visualización de la Señal (Dominio del Tiempo)")
+st.subheader("📊 Visualización de la Señal")
 
 fig, ax = plt.subplots(figsize=(12, 5))
 ax.plot(t, y, color='#d62728', linewidth=2.5, label="Voltaje de Salida")
@@ -39,8 +39,8 @@ if ymax > 0:
     ax.text(0.1, ymax + 0.1, f'Máximo: {ymax:.2f} μm', color='gray', fontweight='bold')
 
 # Configuración de Ejes (Claros para todo público)
-ax.set_xlabel("Tiempo (Segundos) - Eje X", fontsize=11)
-ax.set_ylabel("Amplitud / Voltaje (Micrómetros μm) - Eje Y", fontsize=11)
+ax.set_xlabel("Tiempo (Segundos)", fontsize=11)
+ax.set_ylabel("Amplitud / Voltaje (Micrómetros μm)", fontsize=11)
 ax.set_ylim(-2.5, 2.5)
 ax.grid(True, which='both', linestyle=':', alpha=0.7)
 ax.legend(loc="upper right")
@@ -70,23 +70,43 @@ with col_p3:
     st.caption("**Consecuencia:** Desplaza la onda hacia la izquierda o derecha.")
     st.caption("**¿Por qué cambiarlo?** Para sincronizar la medición con el momento exacto del choque de la partícula.")
 
-# 6. LECTURA DE INSTRUMENTACIÓN
+# 6. LECTURA DE INSTRUMENTACIÓN (Interpretación de datos)
 st.divider()
-st.subheader("📑 Lectura de Instrumentación")
+st.subheader("📊 Panel de Resultados: ¿Qué nos dice el sensor?")
+
 m1, m2, m3 = st.columns(3)
-m1.metric("Voltaje de Pico", f"{b_val} V")
-m2.metric("Frecuencia de Oscilación", f"{w_val/(2*np.pi):.2f} Hz")
-m3.metric("Desplazamiento Máximo", f"{b_val} μm")
+
+# Explicamos qué es el voltaje, la frecuencia y el movimiento
+m1.metric(
+    label="Señal Eléctrica (Voltaje)", 
+    value=f"{b_val} V", 
+    help="Es la fuerza de la señal que llega a la computadora. Viene del cristal piezoeléctrico."
+)
+
+m2.metric(
+    label="Ritmo de Vibración (Frecuencia)", 
+    value=f"{w_val/(2*np.pi):.2f} Hz", 
+    help="Indica cuántas veces por segundo oscila el sensor. Si hay una partícula, este número cambia."
+)
+
+m3.metric(
+    label="Desplazamiento Físico", 
+    value=f"{b_val} μm", 
+    help="Es la distancia real que se mueve la viga del sensor en la escala de micras."
+)
 
 # 7. CADENA DE MEDICIÓN (A prueba de todo público)
 st.divider()
 st.subheader("🔗 Cadena de Medición: Del Aire al Dato")
 st.info("""
-1. **Impacto:** Una partícula en el aire choca con nuestro sensor (Nanocantilever).
-2. **Movimiento:** El sensor vibra como un trampolín minúsculo (esto genera la Amplitud).
-3. **Conversión:** Un material especial transforma ese movimiento en electricidad (Voltaje).
-4. **Captura:** La computadora lee ese voltaje y dibuja la onda que ves arriba.
-5. **Resultado:** Al analizar qué tan rápido vibra la onda, sabemos qué tipo de partícula se detectó.
-""")
+1. **Impacto:** Una partícula en el aire "choca" con nuestro sensor (Nanocantilever).
+2. **Movimiento:** El sensor vibra como un trampolín minúsculo (esto genera la onda graficada).
+3. **Conversión:** Un material especial (piezoeléctrico) transforma ese movimiento en electricidad (Diferencia de potencial "Voltaje").
+4. **Resultado:** La computadora aplica una operación matemática; **Transformada de Fourier**. Esta "desarma" la señal de voltaje para 
+encontrar su frecuencia exacta. Si la frecuencia bajó, significa que el sensor ahora es más pesado: hemos detectado una partícula. 
+
 
 st.caption("A partir de esta onda senoidal, se extrae la frecuencia característica mediante la Transformada de Fourier.")
+# Pie de página
+st.caption("Proyecto de Ingeniería Biomédica - Evaluación de calidad microbiológica del aire.")
+
