@@ -89,4 +89,4 @@ st.info("""
 5. **Resultado:** Al analizar qué tan rápido vibra la onda, sabemos qué tipo de partícula se detectó.
 """)
 
-    st.caption("A partir de esta onda senoidal, se extrae la frecuencia característica mediante la Transformada de Fourier.")
+st.caption("A partir de esta onda senoidal, se extrae la frecuencia característica mediante la Transformada de Fourier.")
