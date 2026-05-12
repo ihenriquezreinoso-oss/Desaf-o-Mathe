@@ -51,7 +51,7 @@ with col2:
 
 # 6. NUEVA SECCIÓN: Fundamento del Voltaje (Lo que pediste agregar)
 st.markdown("---")
-with st.expander("🔍 ¿Cómo entra el Voltaje en el gráfico? (Explicación Técnica)"):
+with st.expander("🔍 ¿Cómo entra el Voltaje en el gráfico?"):
     st.markdown("""
     El sensor no mide "frecuencia" directamente como un número, sino que utiliza un **transductor piezoeléctrico** u óptico. 
     Así funciona el proceso:
