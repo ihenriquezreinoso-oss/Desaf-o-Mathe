@@ -109,5 +109,5 @@ encontrar su frecuencia exacta. Si la frecuencia bajó, significa que el sensor 
 
 st.caption("A partir de esta onda senoidal, se extrae la frecuencia característica mediante la Transformada de Fourier.")
 # Pie de página
-st.caption("Proyecto de Ingeniería Biomédica - Evaluación de calidad microbiológica del aire.")
+st.caption("Proyecto de Matemática Aplicada I - Ingeniería Civil en Biomedicina UDD.")
 
