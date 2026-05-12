@@ -2,92 +2,83 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1. Configuración de la interfaz
-st.set_page_config(page_title="Bio-Detector Inteligente", page_icon="🍃", layout="wide")
+# 1. Configuración de nivel profesional
+st.set_page_config(page_title="Modelamiento Biosensor", page_icon="🔬", layout="wide")
 
-# Estilo personalizado para mejorar la estética
+# 2. Encabezado descriptivo (Contexto del Proyecto)
+st.title("🔬 Caracterización Dinámica de Nanocantilever")
 st.markdown("""
-    <style>
-    .main { background-color: #f5f7f9; }
-    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    </style>
-    """, unsafe_allow_html=True)
+Esta plataforma modela la respuesta de un sensor de masa para la detección de partículas suspendidas. 
+La señal representa la **transducción piezoeléctrica**: cómo el movimiento físico se convierte en voltaje.
+""")
 
-st.title("🍃 Detector de Partículas: Calidad de Aire CECOSF")
-st.write("---")
+# 3. Panel de Parámetros Técnicos
+st.sidebar.header("Variables de Simulación")
 
-# 2. SECCIÓN EXPLICATIVA INICIAL (Para el Profe de Bio y público general)
-col_text, col_img = st.columns([2, 1])
-
-with col_text:
-    st.subheader("¿Cómo funciona este sensor?")
-    st.write("""
-    Imagina una **micro-viga** (como un trampolín invisible al ojo humano). 
-    Cuando el aire está limpio, vibra a un ritmo constante. Si una partícula (polvo, polen o bacteria) 
-    se posa sobre ella, la viga se vuelve más pesada y su 'latido' cambia.
-    
-    **Mueve los controles de la izquierda para simular diferentes escenarios.**
-    """)
-
-# 3. PANEL DE CONTROL INTUITIVO (Sidebar)
-st.sidebar.header("🕹️ Simular Escenario")
-
-# Traducimos la matemática a eventos físicos
-st.sidebar.subheader("1. Gravedad del Impacto")
-impacto = st.sidebar.select_slider(
-    "¿Qué tan grande es la partícula?",
-    options=["Minúscula", "Pequeña", "Mediana", "Grande"],
-    value="Pequeña"
+# Mantenemos el rigor de los valores pero añadimos contexto
+b_val = st.sidebar.slider(
+    "Amplitud (B) [μm]", 
+    min_value=0.0, max_value=2.0, value=1.008, step=0.001,
+    help="Magnitud del desplazamiento físico de la micro-viga."
 )
-# Mapeo de impacto a Amplitud (B)
-b_map = {"Minúscula": 0.2, "Pequeña": 0.8, "Mediana": 1.4, "Grande": 2.0}
-b_val = b_map[impacto]
 
-st.sidebar.subheader("2. Estado del Aire")
-aire = st.sidebar.select_slider(
-    "Densidad del flujo de aire",
-    options=["Calmo", "Normal", "Turbulento"],
-    value="Normal"
+w_val = st.sidebar.slider(
+    "Frecuencia Angular (ω) [rad/s]", 
+    min_value=0.0, max_value=20.0, value=6.33,
+    help="Velocidad de oscilación. Cambios en esta variable indican detección de masa."
 )
-# Mapeo de aire a Frecuencia (w)
-w_map = {"Calmo": 3.0, "Normal": 7.0, "Turbulento": 15.0}
-w_val = w_map[aire]
 
-st.sidebar.write("---")
-st.sidebar.caption("⚙️ **Datos para el Decano (Ingeniería):**")
-st.sidebar.text(f"Amplitud (B): {b_val} μm")
-st.sidebar.text(f"Frecuencia (ω): {w_val} rad/s")
-
-# 4. CÁLCULOS Y GRÁFICO
+# 4. Cálculo de la función de onda
 t = np.linspace(0, 10, 1000)
 y = b_val * np.sin(w_val * t)
 
-# Visualización central
-st.subheader("📡 Visualización del 'Latido' del Sensor")
-fig, ax = plt.subplots(figsize=(12, 4))
-ax.plot(t, y, color='#00C853', linewidth=3)
-ax.fill_between(t, y, color='#00C853', alpha=0.1)
-ax.set_ylim(-2.2, 2.2)
-ax.axis('off') # Quitamos los ejes para que sea más "limpio" y visual para el público general
-st.pyplot(fig, use_container_width=True)
+# 5. Área de Visualización e Interpretación
+col_graf, col_info = st.columns([2, 1])
 
-# 5. LECTURA DE RESULTADOS (A prueba de todo público)
-res1, res2, res3 = st.columns(3)
-
-with res1:
-    st.metric("Estado de la Viga", "Oscilando" if b_val > 0 else "Inactiva")
-with res2:
-    estado_salud = "Óptimo" if w_val < 10 else "Alerta"
-    st.metric("Calidad de Aire", estado_salud)
-with res3:
-    st.metric("Detección", f"{impacto}")
-
-# 6. EXPLICACIÓN TÉCNICA (Oculta para quien quiera profundizar)
-with st.expander("🔬 Especificaciones Técnicas (Uso Académico)"):
-    st.markdown(f"""
-    **Modelo Matemático:** $y(t) = {b_val} \cdot \sin({w_val} t)$
+with col_graf:
+    # Gráfico con estándares de laboratorio
+    plt.style.use('dark_background') # Le da un toque de 'instrumento de laboratorio'
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(t, y, color='#00FF41', linewidth=2, label="Señal de Salida (V)") # Color osciloscopio
+    ax.axhline(0, color='white', linewidth=0.5, alpha=0.5)
     
-    Este gráfico representa la conversión de energía mecánica en eléctrica (Voltaje) 
-    mediante un transductor piezoeléctrico. Los cambios en la frecuencia ($\omega$) 
-    son directamente proporcionales al cambio de masa ($\Delta m$) en la superficie del nanocantilever.
+    ax.set_title("Respuesta del Sensor (Dominio del Tiempo)", fontsize=14, color='white')
+    ax.set_xlabel("Tiempo (s)", fontsize=10)
+    ax.set_ylabel("Amplitud / Voltaje (μm)", fontsize=10)
+    ax.set_ylim(-2.5, 2.5)
+    ax.grid(True, linestyle='--', alpha=0.3)
+    
+    st.pyplot(fig, use_container_width=True)
+
+with col_info:
+    st.subheader("📊 Análisis del Modelo")
+    
+    # Explicación de qué estamos modelando exactamente
+    st.write("**Fenómeno:**")
+    st.info("""
+    Estamos modelando la **Frecuencia de Resonancia**. 
+    En un biosensor real, cuando una partícula se deposita sobre la viga, la masa aumenta y la frecuencia ($\omega$) disminuye.
     """)
+    
+    # Datos técnicos exactos para el Decano
+    st.write("**Lectura de Instrumentación:**")
+    st.metric("Voltaje Máximo", f"{b_val} V")
+    st.metric("Frecuencia Natural", f"{w_val/(2*np.pi):.2f} Hz")
+
+# 6. Fundamento del Proceso (Voltaje y Fourier)
+st.divider()
+st.subheader("⚙️ Cadena de Medición")
+
+f1, f2, f3 = st.columns(3)
+
+with f1:
+    st.write("**1. Entrada Mecánica**")
+    st.caption("La interacción con partículas genera un desplazamiento en el cantilever medido en micras.")
+
+with f2:
+    st.write("**2. Transducción**")
+    st.caption("El efecto piezoeléctrico convierte este desplazamiento en una señal eléctrica de voltaje.")
+
+with f3:
+    st.write("**3. Análisis (FFT)**")
+    st.caption("A partir de esta onda senoidal, se extrae la frecuencia característica mediante la Transformada de Fourier.")
