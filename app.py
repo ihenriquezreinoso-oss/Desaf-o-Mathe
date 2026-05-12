@@ -2,77 +2,92 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1. Configuración de alto nivel
-st.set_page_config(page_title="Sensor Biotecnológico", page_icon="🔬", layout="wide")
+# 1. Configuración de la interfaz
+st.set_page_config(page_title="Bio-Detector Inteligente", page_icon="🍃", layout="wide")
 
-st.title("🧬 Monitoreo de Biosensor en Tiempo Real")
-st.subheader("Proyecto: Evaluación de Calidad de Aire - CECOSF")
+# Estilo personalizado para mejorar la estética
+st.markdown("""
+    <style>
+    .main { background-color: #f5f7f9; }
+    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+    """, unsafe_allow_html=True)
 
-# 2. Explicación para perfiles no matemáticos
-st.info("""
-**¿Qué estamos viendo?** Este gráfico representa la oscilación de un sensor ultra sensible. 
-Cuando una partícula en el aire toca el sensor, su forma de vibrar cambia. 
-Aquí simulamos esa vibración convertida en una señal eléctrica (Voltaje).
-""")
+st.title("🍃 Detector de Partículas: Calidad de Aire CECOSF")
+st.write("---")
 
-# 3. Panel de Control "A prueba de todo público"
-st.sidebar.header("🕹️ Ajustes del Experimento")
+# 2. SECCIÓN EXPLICATIVA INICIAL (Para el Profe de Bio y público general)
+col_text, col_img = st.columns([2, 1])
 
-# Usamos labels que expliquen la física y la matemática al mismo tiempo
-b_val = st.sidebar.slider(
-    "Amplitud / Intensidad del Choque (B)", 
-    0.0, 2.0, 1.0, 
-    help="Mide qué tan amplio es el movimiento de la viga. A mayor masa de la partícula, mayor puede ser el impacto."
-)
-
-w_val = st.sidebar.slider(
-    "Frecuencia / Rapidez de Vibración (ω)", 
-    0.0, 20.0, 6.3, 
-    help="Mide cuántas veces oscila el sensor por segundo. Las partículas cambian la frecuencia de resonancia."
-)
-
-p_val = st.sidebar.slider(
-    "Desfase / Punto de Inicio (ψ)", 
-    0.0, float(np.pi), 0.0,
-    help="Representa en qué momento exacto del ciclo empezamos a medir la señal."
-)
-
-# 4. Cálculos
-t = np.linspace(0, 10, 1000)
-y = b_val * np.sin(w_val * t + p_val)
-
-# 5. Visualización Dual
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(t, y, color='#2E86C1', linewidth=3, label="Señal del Transductor (Voltaje)")
-    ax.fill_between(t, y, alpha=0.2, color='#2E86C1')
+with col_text:
+    st.subheader("¿Cómo funciona este sensor?")
+    st.write("""
+    Imagina una **micro-viga** (como un trampolín invisible al ojo humano). 
+    Cuando el aire está limpio, vibra a un ritmo constante. Si una partícula (polvo, polen o bacteria) 
+    se posa sobre ella, la viga se vuelve más pesada y su 'latido' cambia.
     
-    # Ejes claros para el Decano
-    ax.set_title("Ondas de Resonancia del Nanocantilever", fontsize=15, fontweight='bold')
-    ax.set_xlabel("Tiempo de muestreo (ms)", fontsize=12)
-    ax.set_ylabel("Potencial Eléctrico (V) / Desplazamiento (μm)", fontsize=12)
-    ax.set_ylim(-2.5, 2.5)
-    ax.grid(True, linestyle=':', alpha=0.6)
-    st.pyplot(fig, use_container_width=True)
-
-with col2:
-    st.write("### 📊 Análisis de Datos")
-    st.metric("Desplazamiento Máximo", f"{b_val} μm", help="Distancia física que se mueve la micro-viga.")
-    st.metric("Frecuencia Detectada", f"{w_val/(2*np.pi):.2f} Hz", help="Cantidad de vibraciones completas por segundo.")
-    
-    # Explicación para el Bio-profe
-    st.success(f"""
-    **Interpretación Biológica:**
-    Si este fuera un sensor real, una frecuencia de **{w_val/(2*np.pi):.2f} Hz** nos indicaría si el aire está limpio o si hay presencia de agentes patógenos alterando la masa del dispositivo.
+    **Mueve los controles de la izquierda para simular diferentes escenarios.**
     """)
 
-# 6. Fundamentación técnica final
-with st.expander("🛠️ Notas Técnicas para Facultad"):
-    st.write("""
-    El gráfico modela la **función de transferencia** del sensor. 
-    1. La vibración mecánica es detectada por un cristal piezoeléctrico.
-    2. El cristal genera un voltaje proporcional al desplazamiento ($y$).
-    3. La señal resultante es procesada mediante una Transformada de Fourier para identificar cambios en la masa (detección de partículas).
+# 3. PANEL DE CONTROL INTUITIVO (Sidebar)
+st.sidebar.header("🕹️ Simular Escenario")
+
+# Traducimos la matemática a eventos físicos
+st.sidebar.subheader("1. Gravedad del Impacto")
+impacto = st.sidebar.select_slider(
+    "¿Qué tan grande es la partícula?",
+    options=["Minúscula", "Pequeña", "Mediana", "Grande"],
+    value="Pequeña"
+)
+# Mapeo de impacto a Amplitud (B)
+b_map = {"Minúscula": 0.2, "Pequeña": 0.8, "Mediana": 1.4, "Grande": 2.0}
+b_val = b_map[impacto]
+
+st.sidebar.subheader("2. Estado del Aire")
+aire = st.sidebar.select_slider(
+    "Densidad del flujo de aire",
+    options=["Calmo", "Normal", "Turbulento"],
+    value="Normal"
+)
+# Mapeo de aire a Frecuencia (w)
+w_map = {"Calmo": 3.0, "Normal": 7.0, "Turbulento": 15.0}
+w_val = w_map[aire]
+
+st.sidebar.write("---")
+st.sidebar.caption("⚙️ **Datos para el Decano (Ingeniería):**")
+st.sidebar.text(f"Amplitud (B): {b_val} μm")
+st.sidebar.text(f"Frecuencia (ω): {w_val} rad/s")
+
+# 4. CÁLCULOS Y GRÁFICO
+t = np.linspace(0, 10, 1000)
+y = b_val * np.sin(w_val * t)
+
+# Visualización central
+st.subheader("📡 Visualización del 'Latido' del Sensor")
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.plot(t, y, color='#00C853', linewidth=3)
+ax.fill_between(t, y, color='#00C853', alpha=0.1)
+ax.set_ylim(-2.2, 2.2)
+ax.axis('off') # Quitamos los ejes para que sea más "limpio" y visual para el público general
+st.pyplot(fig, use_container_width=True)
+
+# 5. LECTURA DE RESULTADOS (A prueba de todo público)
+res1, res2, res3 = st.columns(3)
+
+with res1:
+    st.metric("Estado de la Viga", "Oscilando" if b_val > 0 else "Inactiva")
+with res2:
+    estado_salud = "Óptimo" if w_val < 10 else "Alerta"
+    st.metric("Calidad de Aire", estado_salud)
+with res3:
+    st.metric("Detección", f"{impacto}")
+
+# 6. EXPLICACIÓN TÉCNICA (Oculta para quien quiera profundizar)
+with st.expander("🔬 Especificaciones Técnicas (Uso Académico)"):
+    st.markdown(f"""
+    **Modelo Matemático:** $y(t) = {b_val} \cdot \sin({w_val} t)$
+    
+    Este gráfico representa la conversión de energía mecánica en eléctrica (Voltaje) 
+    mediante un transductor piezoeléctrico. Los cambios en la frecuencia ($\omega$) 
+    son directamente proporcionales al cambio de masa ($\Delta m$) en la superficie del nanocantilever.
     """)
